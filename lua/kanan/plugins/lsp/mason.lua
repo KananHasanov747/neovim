@@ -1,3 +1,4 @@
+-- TODO: startup time is high for both plugins
 return {
 	-- Package Manager for LSP, Formatters, DAP servers, and linters
 	{
@@ -43,7 +44,7 @@ return {
 				ensure_installed = {
 					"lua_ls",
 				},
-				automatic_installation = true,
+				auto_install = true,
 			})
 		end,
 	},

@@ -1,5 +1,6 @@
 return {
 	"stevearc/conform.nvim",
+	enabled = true, -- false if "none-ls.nvim" is activated
 	event = "VeryLazy",
 	dependencies = { "mason.nvim" },
 	cmd = "ConformInfo",

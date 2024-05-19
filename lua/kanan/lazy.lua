@@ -14,17 +14,17 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	{ import = "kanan.plugins" },
 	{ import = "kanan.plugins.lsp" },
-	-- { import = "kanan.plugins.ui" },
+	{ import = "kanan.plugins.ui" },
 	-- { import = "kanan.plugins.util" },
 	{ import = "kanan.plugins.coding" },
-	-- { import = "kanan.plugins.editor" },
+	{ import = "kanan.plugins.editor" },
 }, {
 	defaults = {
 		lazy = true,
 		version = "*",
 	},
 	install = {
-		colorscheme = { "onedark" },
+		colorscheme = { "onedark" }, -- TODO: use vim.g.colors_name
 	},
 	change_detection = {
 		enabled = true,

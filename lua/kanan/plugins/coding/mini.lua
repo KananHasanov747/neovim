@@ -1,4 +1,5 @@
 return {
+	-- automatically manage to pair characters
 	{
 		"echasnovski/mini.pairs",
 		event = "VeryLazy",

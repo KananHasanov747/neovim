@@ -1,10 +1,12 @@
+-- TODO: startup time is high
 return {
 	"neovim/nvim-lspconfig",
-	event = "VeryLazy",
+	event = { "BufReadPost", "BufNewFile", "BufWritePre" },
 	cmd = { "LspInfo", "LspInstall", "LspUninstall" },
 	dependencies = {
 		"hrsh7th/nvim-cmp",
 		"hrsh7th/cmp-nvim-lsp",
+		"williamboman/mason-lspconfig.nvim",
 	},
 	config = function()
 		local lspconfig = require("lspconfig")
@@ -41,5 +43,7 @@ return {
 				settings = settings,
 			})
 		end
+
+		vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
 	end,
 }
