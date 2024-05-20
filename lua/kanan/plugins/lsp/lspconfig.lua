@@ -10,18 +10,19 @@ return {
 		"williamboman/mason-lspconfig.nvim",
 	},
 	config = function()
-		local signs = { Error = " ", Warn = " ", Hint = " ", Info = "" }
-		for type, icon in pairs(signs) do
-			local hl = "DiagnosticSign" .. type
-			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-		end
-
 		vim.diagnostic.config({
 			virtual_text = {
 				prefix = "●",
 				source = "if_many",
 			},
-			signs = true,
+			signs = {
+				text = {
+					[vim.diagnostic.severity.ERROR] = " ",
+					[vim.diagnostic.severity.WARN] = " ",
+					[vim.diagnostic.severity.HINT] = " ",
+					[vim.diagnostic.severity.INFO] = " ",
+				},
+			},
 			underline = true,
 			update_in_insert = false,
 			severity_sort = false,
@@ -32,35 +33,56 @@ return {
 
 		local servers = {
 			lua_ls = {
-				Lua = {
-					runtime = {
-						version = "LuaJIT",
-					},
-					diagnostics = {
-						globals = { "vim" },
-					},
-					workspace = {
-						checkThirdParty = false,
-						library = {
-							vim.env.VIMRUNTIME,
+				settings = {
+					Lua = {
+						runtime = {
+							version = "LuaJIT",
 						},
-					},
-					telemetry = {
-						enable = false,
-					},
-					hint = {
-						enable = true,
+						diagnostics = {
+							globals = { "vim" },
+						},
+						workspace = {
+							checkThirdParty = false,
+							library = {
+								vim.env.VIMRUNTIME,
+							},
+						},
+						telemetry = {
+							enable = false,
+						},
+						hint = {
+							enable = true,
+						},
 					},
 				},
 			},
+			html = {
+				filetypes = { "html", "htmldjango" },
+			},
 			ruff_lsp = {},
+			cssls = {},
+			tailwindcss = {
+				root_dir = function(fname)
+					return lspconfig.util.root_pattern(
+						"tailwind.config.js",
+						"tailwind.config.ts",
+						"./theme/static_src/tailwind.config.js"
+					)(fname) or lspconfig.util.root_pattern("postcss.config.js", "postcss.config.ts")(fname) or lspconfig.util.find_package_json_ancestor(
+						fname
+					) or lspconfig.util.find_node_modules_ancestor(fname) or lspconfig.util.find_git_ancestor(
+						fname
+					)
+				end,
+			},
 		}
 
-		for lsp, settings in pairs(servers) do
+		for lsp, values in pairs(servers) do
 			lspconfig[lsp].setup({
 				-- on_attach = on_attach
 				capabilties = capabilities,
-				settings = settings,
+				root_dir = values.root_dir,
+				settings = values.settings,
+				filetypes = values.filetypes,
 			})
 		end
 

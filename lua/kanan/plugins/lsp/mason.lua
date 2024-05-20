@@ -11,6 +11,7 @@ return {
 
 			local formatters = {
 				"stylua",
+				"prettier",
 			}
 			local dap = {}
 			local linters = {}
@@ -44,6 +45,9 @@ return {
 				ensure_installed = {
 					"lua_ls",
 					"ruff_lsp",
+					"html",
+					"cssls",
+					"tailwindcss",
 				},
 				auto_install = true,
 			})

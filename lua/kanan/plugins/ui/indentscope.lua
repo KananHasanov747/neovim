@@ -25,7 +25,7 @@ return {
 		config = function()
 			local indentscope = require("mini.indentscope")
 			indentscope.setup({
-				symbol = "│",
+				symbol = " │",
 				options = { try_as_border = true },
 				draw = {
 					animation = function()

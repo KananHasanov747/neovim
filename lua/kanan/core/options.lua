@@ -6,10 +6,12 @@ g.maplocalleader = " "
 
 local options = {
 	clipboard = "unnamedplus",
+	confirm = true,
 	cursorline = true,
 	expandtab = true,
 	formatoptions = "jcroqlnt", -- tcqj
 	ignorecase = true,
+	laststatus = 3,
 	mouse = "a",
 	number = true,
 	relativenumber = true,

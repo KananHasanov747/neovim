@@ -19,6 +19,7 @@ return {
 			},
 		},
 	},
+
 	config = function()
 		local cmp = require("cmp")
 		local lspkind = require("lspkind")
@@ -65,10 +66,10 @@ return {
 		})
 
 		local _highlights = {
-			-- { 0, "CmpMenu", { bg = "#1e222a" } },
-			-- { 0, "CmpMenuSel", { bg = "#42464e" } },
+			{ 0, "CmpPMenu", { bg = "#19212f", blend = 15 } },
+			{ 0, "CmpPMenuSel", { bg = "#2f3a4a", blend = 15 } }, -- #3c4759
 			{ 0, "CmpPMenuBorder", { fg = "#ffffff", blend = 100 } },
-			-- { 0, "CmpDoc", { bg = "#1e222c" } },
+			{ 0, "CmpPDoc", { link = "CmpPMenu" } },
 			{ 0, "CmpPDocBorder", { link = "CmpPDocBorder" } },
 		}
 
@@ -91,7 +92,7 @@ return {
 
 		local opts = {
 			completion = {
-				completeopt = "menu,menuone,noinsert",
+				completeopt = "menu,menuone,noselect",
 			},
 			window = {
 				-- completion = cmp.config.window.bordered(),
@@ -99,11 +100,11 @@ return {
 
 				completion = {
 					border = border("CmpPMenuBorder"),
-					-- winhighlight = "Normal:CmpMenu,CursorLine:CmpMenuSel,Search:None",
+					winhighlight = "Normal:CmpPMenu,CursorLine:CmpPMenuSel,Search:None",
 				},
 				documentation = {
 					border = border("CmpPDocBorder"),
-					-- winhighlight = "Normal:CmpDoc",
+					winhighlight = "Normal:CmpPDoc",
 				},
 			},
 			formatting = {
