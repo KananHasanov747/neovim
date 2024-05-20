@@ -11,9 +11,22 @@ return {
 			{
 				"<leader>e",
 				function()
-					require("neo-tree.command").execute({ toggle = true, dir = vim.api.nvim_exec("pwd", true) })
+					local cwd = vim.fn.getcwd()
+					local git_root = vim.fs.find(".git", { path = cwd, upward = true })[1]
+
+					require("neo-tree.command").execute({
+						toggle = true,
+						dir = git_root and vim.fn.fnamemodify(git_root, ":h") or cwd,
+					})
 				end,
-				desc = "Explorer Neotree",
+				desc = "Explorer Neotree (Root dir)",
+			},
+			{
+				"<leader>E",
+				function()
+					require("neo-tree.command").execute({ toggle = true, dir = vim.fn.getcwd() })
+				end,
+				desc = "Explorer Neotree (cwd)",
 			},
 			{
 				"<leader>ge",
