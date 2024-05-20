@@ -1,6 +1,7 @@
 -- TODO: startup time is high
 return {
 	"neovim/nvim-lspconfig",
+	-- enabled = false,
 	event = { "BufReadPost", "BufNewFile", "BufWritePre" },
 	cmd = { "LspInfo", "LspInstall", "LspUninstall" },
 	dependencies = {
@@ -9,8 +10,26 @@ return {
 		"williamboman/mason-lspconfig.nvim",
 	},
 	config = function()
+		local signs = { Error = " ", Warn = " ", Hint = " ", Info = "" }
+		for type, icon in pairs(signs) do
+			local hl = "DiagnosticSign" .. type
+			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+		end
+
+		vim.diagnostic.config({
+			virtual_text = {
+				prefix = "●",
+				source = "if_many",
+			},
+			signs = true,
+			underline = true,
+			update_in_insert = false,
+			severity_sort = false,
+		})
+
 		local lspconfig = require("lspconfig")
 		local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
 		local servers = {
 			lua_ls = {
 				Lua = {
@@ -34,6 +53,7 @@ return {
 					},
 				},
 			},
+			ruff_lsp = {},
 		}
 
 		for lsp, settings in pairs(servers) do

@@ -43,6 +43,7 @@ return {
 			require("mason-lspconfig").setup({
 				ensure_installed = {
 					"lua_ls",
+					"ruff_lsp",
 				},
 				auto_install = true,
 			})

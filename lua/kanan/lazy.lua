@@ -13,18 +13,22 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 	{ import = "kanan.plugins" },
-	{ import = "kanan.plugins.lsp" },
 	{ import = "kanan.plugins.ui" },
-	-- { import = "kanan.plugins.util" },
 	{ import = "kanan.plugins.coding" },
 	{ import = "kanan.plugins.editor" },
+	{ import = "kanan.plugins.util" },
+	{ import = "kanan.plugins.lsp" },
 }, {
+	enabled = false,
 	defaults = {
 		lazy = true,
-		version = "*",
+		version = false, -- if use stable (that is, "*"), it'll break the neovim config
 	},
 	install = {
 		colorscheme = { "onedark" }, -- TODO: use vim.g.colors_name
+	},
+	checker = {
+		enabled = true,
 	},
 	change_detection = {
 		enabled = true,
