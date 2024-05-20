@@ -1,4 +1,3 @@
--- BUG: doesn't work properly
 return {
 	"nvimdev/dashboard-nvim",
 	lazy = false,
