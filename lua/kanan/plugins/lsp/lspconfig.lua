@@ -1,4 +1,3 @@
--- TODO: startup time is high
 return {
 	"neovim/nvim-lspconfig",
 	-- enabled = false,
@@ -30,7 +29,8 @@ return {
 		})
 
 		local lspconfig = require("lspconfig")
-		local capabilities = require("cmp_nvim_lsp").default_capabilities()
+		local capabilities = vim.lsp.protocol.make_client_capabilities()
+		capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 		local function on_attach(client, bufnr)
 			local function buf_set_keymap(mode, key, func)

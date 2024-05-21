@@ -30,7 +30,8 @@ local options = {
 	tabstop = 2,
 	termguicolors = true,
 	virtualedit = "block",
-	wrap = false,
+	-- winminwidth = 5,
+	-- wrap = false,
 }
 
 for k, v in pairs(options) do

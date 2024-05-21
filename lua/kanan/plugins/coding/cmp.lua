@@ -1,3 +1,4 @@
+-- TODO: the plugin is too slow during the startuptime
 return {
 	"hrsh7th/nvim-cmp",
 	-- event = "InsertEnter",
@@ -18,7 +19,7 @@ return {
 						"rafamadriz/friendly-snippets",
 					},
 				},
-				"hrsh7th/cmp-emoji",
+				-- "hrsh7th/cmp-emoji",
 				-- { "garymjr/nvim-snippets", opts = { friendly_snippets = true } },
 			},
 		},
@@ -96,7 +97,7 @@ return {
 
 		local opts = {
 			completion = {
-				completeopt = "menu,menuone,noinsert",
+				completeopt = "menu,menuone,noselect",
 			},
 			window = {
 				-- completion = cmp.config.window.bordered(),
@@ -146,12 +147,17 @@ return {
 			sources = cmp.config.sources({
 				{ name = "nvim_lsp" },
 				{ name = "path" },
-				{ name = "buffer" },
 				{ name = "luasnip" },
 				{ name = "emoji" },
+			}, {
+				{ name = "buffer" },
 			}),
 		}
 
+		local completion = {
+			completeopt = "menu,menuone,noselect",
+			-- autocomplete = false,
+		}
 		local cmdline_mapping = cmp.mapping.preset.cmdline({
 			["<Up>"] = {
 				c = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
@@ -159,17 +165,14 @@ return {
 			["<Down>"] = {
 				c = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
 			},
-			["<CR>"] = { c = cmp.mapping.confirm({ select = true }) },
+			["<CR>"] = { c = cmp.mapping.confirm() },
 			["<C-e>"] = { c = cmp.mapping.abort() },
 		})
 
 		cmp.setup(opts)
 		cmp.setup.cmdline(":", {
-			completion = {
-				completeopt = "menu,menuone,noselect",
-				autocomplete = false,
-			},
-      -- stylua: ignore
+			completion = completion,
+		    -- stylua: ignore
 			view = { entries = "custom" },
 			mapping = cmdline_mapping,
 			sources = cmp.config.sources({
@@ -186,11 +189,8 @@ return {
 			matching = { disallow_symbol_nonprefix_matching = false },
 		})
 		cmp.setup.cmdline("/", {
-			completion = {
-				completeopt = "menu,menuone,noselect",
-				autocomplete = false,
-			},
-      -- stylua: ignore
+			completion = completion,
+		    -- stylua: ignore
 			view = { entries = "custom" },
 			mapping = cmdline_mapping,
 			sources = {
@@ -198,10 +198,8 @@ return {
 			},
 		})
 		cmp.setup.cmdline("?", {
-			completion = {
-				autocomplete = false,
-			},
-      -- stylua: ignore
+			completion = completion,
+		    -- stylua: ignore
 			view = { entries = "custom" },
 			mapping = cmdline_mapping,
 			sources = {

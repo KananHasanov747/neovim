@@ -14,10 +14,10 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	{ import = "kanan.plugins" },
 	{ import = "kanan.plugins.ui" },
-	{ import = "kanan.plugins.coding" },
 	{ import = "kanan.plugins.editor" },
 	{ import = "kanan.plugins.util" },
 	{ import = "kanan.plugins.lsp" },
+	{ import = "kanan.plugins.coding" },
 }, {
 	enabled = false,
 	defaults = {
