@@ -14,7 +14,10 @@ local options = {
 	laststatus = 3,
 	mouse = "a",
 	number = true,
+	numberwidth = 4,
 	relativenumber = true,
+	-- scrolloff = 4,
+	-- sidescrolloff = 8,
 	shiftwidth = 2,
 	showmode = false,
 	signcolumn = "yes",
@@ -23,8 +26,11 @@ local options = {
 	splitbelow = true,
 	splitkeep = "screen",
 	splitright = true,
+	-- statuscolumn = "",
 	tabstop = 2,
 	termguicolors = true,
+	virtualedit = "block",
+	wrap = false,
 }
 
 for k, v in pairs(options) do

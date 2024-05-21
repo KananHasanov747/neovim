@@ -2,7 +2,8 @@
 return {
 	"neovim/nvim-lspconfig",
 	-- enabled = false,
-	event = { "BufReadPost", "BufNewFile", "BufWritePre" },
+	-- event = { "BufReadPost", "BufNewFile", "BufWritePre" },
+	event = "VeryLazy",
 	cmd = { "LspInfo", "LspInstall", "LspUninstall" },
 	dependencies = {
 		"hrsh7th/nvim-cmp",
@@ -31,8 +32,20 @@ return {
 		local lspconfig = require("lspconfig")
 		local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+		local function on_attach(client, bufnr)
+			local function buf_set_keymap(mode, key, func)
+				vim.keymap.set(mode, key, func, { buffer = bufnr, silent = true })
+			end
+
+			-- require("lsp_signature").on_attach()
+
+			-- Mapping
+			buf_set_keymap("n", "K", vim.lsp.buf.hover)
+		end
+
 		local servers = {
 			lua_ls = {
+				single_file_support = true,
 				settings = {
 					Lua = {
 						runtime = {
@@ -57,35 +70,75 @@ return {
 				},
 			},
 			html = {
+				-- cmd = { "vscode-html-language-server", "--stdio" },
 				filetypes = { "html", "htmldjango" },
+				root_dir = lspconfig.util.root_pattern(".git", "package.json"),
 			},
 			ruff_lsp = {},
 			cssls = {},
+			tsserver = {
+				enabled = true,
+				single_file_support = true,
+				root_dir = lspconfig.util.root_pattern("tsconfig.json", "package.json", "jsconfig.json", ".git"),
+				filetypes = {
+					"javascript",
+					"javascriptreact",
+					"javascript.jsx",
+					"typescript",
+					"typescriptreact",
+					"typescript.tsx",
+				},
+				settings = {
+					javascript = {
+						inlayHints = {
+							includeInlayEnumMemberValueHints = true,
+							includeInlayFunctionLikeReturnTypeHints = true,
+							includeInlayFunctionParameterTypeHints = true,
+							includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all';
+							includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+							includeInlayPropertyDeclarationTypeHints = true,
+							includeInlayVariableTypeHints = false,
+						},
+					},
+
+					typescript = {
+						inlayHints = {
+							includeInlayEnumMemberValueHints = true,
+							includeInlayFunctionLikeReturnTypeHints = true,
+							includeInlayFunctionParameterTypeHints = true,
+							includeInlayParameterNameHints = "literals", -- 'none' | 'literals' | 'all';
+							includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+							includeInlayPropertyDeclarationTypeHints = true,
+							includeInlayVariableTypeHints = false,
+						},
+					},
+				},
+			},
 			tailwindcss = {
-				root_dir = function(fname)
-					return lspconfig.util.root_pattern(
-						"tailwind.config.js",
-						"tailwind.config.ts",
-						"./theme/static_src/tailwind.config.js"
-					)(fname) or lspconfig.util.root_pattern("postcss.config.js", "postcss.config.ts")(fname) or lspconfig.util.find_package_json_ancestor(
-						fname
-					) or lspconfig.util.find_node_modules_ancestor(fname) or lspconfig.util.find_git_ancestor(
-						fname
-					)
-				end,
+				single_file_support = false,
+				-- cmd = { "tailwindcss-language-server", "--stdio" },
+				filetypes = { "html", "css", "javascript", "htmldjango" },
+				root_dir = lspconfig.util.root_pattern(
+					"tailwind.config.js",
+					"tailwind.config.cjs",
+					"tailwind.config.ts"
+				),
 			},
 		}
 
-		for lsp, values in pairs(servers) do
-			lspconfig[lsp].setup({
-				-- on_attach = on_attach
-				capabilties = capabilities,
-				root_dir = values.root_dir,
-				settings = values.settings,
-				filetypes = values.filetypes,
-			})
-		end
+		-- provides "capabalities" and "on_attach" to all servers
+		require("mason-lspconfig").setup_handlers({
+			function(server_name)
+				lspconfig[server_name].setup({
+					on_attach = on_attach,
+					capabilities = capabilities,
+				})
+			end,
+		})
 
-		vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
+		-- provides a dedicated handler to each server using the table above
+		for lsp, values in pairs(servers) do
+			lspconfig[lsp].setup(values)
+		end
 	end,
 }

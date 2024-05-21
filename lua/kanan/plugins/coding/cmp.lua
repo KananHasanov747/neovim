@@ -1,12 +1,14 @@
 return {
 	"hrsh7th/nvim-cmp",
-	event = "InsertEnter",
+	-- event = "InsertEnter",
+	event = "VeryLazy",
 	dependencies = {
 		{
 			"hrsh7th/cmp-nvim-lsp",
 			dependencies = {
 				"hrsh7th/cmp-buffer",
 				"hrsh7th/cmp-path",
+				"hrsh7th/cmp-cmdline",
 				"onsails/lspkind.nvim",
 				"roobert/tailwindcss-colorizer-cmp.nvim",
 				{
@@ -16,6 +18,8 @@ return {
 						"rafamadriz/friendly-snippets",
 					},
 				},
+				"hrsh7th/cmp-emoji",
+				-- { "garymjr/nvim-snippets", opts = { friendly_snippets = true } },
 			},
 		},
 	},
@@ -92,7 +96,7 @@ return {
 
 		local opts = {
 			completion = {
-				completeopt = "menu,menuone,noselect",
+				completeopt = "menu,menuone,noinsert",
 			},
 			window = {
 				-- completion = cmp.config.window.bordered(),
@@ -144,9 +148,65 @@ return {
 				{ name = "path" },
 				{ name = "buffer" },
 				{ name = "luasnip" },
+				{ name = "emoji" },
 			}),
 		}
 
+		local cmdline_mapping = cmp.mapping.preset.cmdline({
+			["<Up>"] = {
+				c = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+			},
+			["<Down>"] = {
+				c = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+			},
+			["<CR>"] = { c = cmp.mapping.confirm({ select = true }) },
+			["<C-e>"] = { c = cmp.mapping.abort() },
+		})
+
 		cmp.setup(opts)
+		cmp.setup.cmdline(":", {
+			completion = {
+				completeopt = "menu,menuone,noselect",
+				autocomplete = false,
+			},
+      -- stylua: ignore
+			view = { entries = "custom" },
+			mapping = cmdline_mapping,
+			sources = cmp.config.sources({
+				{ name = "path" },
+			}, {
+				{
+					name = "cmdline",
+					autocomplete = false,
+					option = {
+						ignore_cmds = { "Man", "!" },
+					},
+				},
+			}),
+			matching = { disallow_symbol_nonprefix_matching = false },
+		})
+		cmp.setup.cmdline("/", {
+			completion = {
+				completeopt = "menu,menuone,noselect",
+				autocomplete = false,
+			},
+      -- stylua: ignore
+			view = { entries = "custom" },
+			mapping = cmdline_mapping,
+			sources = {
+				{ name = "buffer" },
+			},
+		})
+		cmp.setup.cmdline("?", {
+			completion = {
+				autocomplete = false,
+			},
+      -- stylua: ignore
+			view = { entries = "custom" },
+			mapping = cmdline_mapping,
+			sources = {
+				{ name = "buffer" },
+			},
+		})
 	end,
 }

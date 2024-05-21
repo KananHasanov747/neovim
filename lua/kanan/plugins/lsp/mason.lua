@@ -47,6 +47,7 @@ return {
 					"ruff_lsp",
 					"html",
 					"cssls",
+					"tsserver",
 					"tailwindcss",
 				},
 				auto_install = true,
