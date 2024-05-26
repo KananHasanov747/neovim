@@ -43,6 +43,27 @@ return {
 			buf_set_keymap("n", "K", vim.lsp.buf.hover)
 		end
 
+		local function border(hl_name)
+			return {
+				{ "╭", hl_name },
+				{ "─", hl_name },
+				{ "╮", hl_name },
+				{ "│", hl_name },
+				{ "╯", hl_name },
+				{ "─", hl_name },
+				{ "╰", hl_name },
+				{ "│", hl_name },
+			}
+		end
+
+		local handlers = {
+			["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border("FloatBorder") }),
+			["textDocument/signatureHelp"] = vim.lsp.with(
+				vim.lsp.handlers.signature_help,
+				{ border = border("FloatBorder") }
+			),
+		}
+
 		local servers = {
 			lua_ls = {
 				single_file_support = true,
@@ -75,7 +96,9 @@ return {
 				root_dir = lspconfig.util.root_pattern(".git", "package.json"),
 			},
 			ruff_lsp = {},
-			cssls = {},
+			cssls = {
+				capabilities = capabilities,
+			},
 			tsserver = {
 				enabled = true,
 				single_file_support = true,
@@ -126,6 +149,7 @@ return {
 			},
 		}
 
+		-- TODO: use handlers inside setup_handlers
 		-- provides "capabalities" and "on_attach" to all servers
 		require("mason-lspconfig").setup_handlers({
 			function(server_name)

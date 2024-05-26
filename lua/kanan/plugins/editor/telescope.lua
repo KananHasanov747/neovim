@@ -1,6 +1,6 @@
 return {
 	"nvim-telescope/telescope.nvim",
-	event = "VeryLazy",
+	-- event = "VeryLazy",
 	cmd = "Telescope",
 	dependencies = {
 		"nvim-lua/plenary.nvim",
@@ -20,7 +20,23 @@ return {
 	},
 	keys = {
 		{ "<leader>fb", "<cmd>Telescope buffers sort_mru=true sort_lastused=true<cr>", desc = "Buffers" },
-		{ "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files (Root Dir)" },
+		{
+			"<leader>ff",
+			function()
+				local cwd = vim.fn.getcwd()
+				local git_root = vim.fs.find(".git", { path = cwd, upward = true })[1]
+				local builtin = require("telescope.builtin")
+
+				if git_root then
+					builtin.git_files({
+						show_untracked = true,
+					})
+				else
+					builtin.find_files()
+				end
+			end,
+			desc = "Find Files (Root Dir)",
+		},
 		{ "<leader>fg", "<cmd>Telescope git_files<cr>", desc = "Find Files (git-files)" },
 		{ "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent" },
 	},
@@ -44,11 +60,23 @@ return {
 					end
 					return 0
 				end,
-			},
-			mappings = {
-				n = {
-					["q"] = actions.close,
+				mappings = {
+					n = {
+						["q"] = actions.close,
+					},
 				},
+			},
+			-- optimizing the highlighting
+			highlight = {
+				enable = true,
+				disable = function(_, buf)
+					local max_filesize = 10000 * 1024 -- 10 MB
+					local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+					if ok and stats and stats.size > max_filesize then
+						vim.notify("Treesitter disabled")
+						return true
+					end
+				end,
 			},
 		}
 	end,

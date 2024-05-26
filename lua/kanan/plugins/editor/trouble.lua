@@ -1,6 +1,6 @@
 return {
 	"folke/trouble.nvim",
-	event = "VeryLazy",
+	-- event = "VeryLazy",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	cmd = { "TroubleToggle", "Trouble" },
 	opts = { height = 20, use_diagnostic_signs = true },
@@ -14,7 +14,7 @@ return {
 		},
 		{ "<leader>xx", "<cmd>TroubleToggle document_diagnostics<cr>", desc = "Document Diagnostics (Trouble)" },
 		{ "<leader>xX", "<cmd>TroubleToggle workspace_diagnostics<cr>", desc = "Workspace Diagnostics (Trouble)" },
-		{ "<leader>xL", "<cmd>TroubleToggle loclist<cr>", desc = "Location Lit (Trouble)" },
+		{ "<leader>xL", "<cmd>TroubleToggle loclist<cr>", desc = "Location List (Trouble)" },
 		{ "<leader>xQ", "<cmd>TroubleToggle quickfix<cr>", desc = "Quickfix List (Trouble)" },
 		{
 			"[q",

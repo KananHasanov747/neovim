@@ -29,6 +29,8 @@ return {
 		local cmp = require("cmp")
 		local lspkind = require("lspkind")
 		local cmp_tailwind = require("tailwindcss-colorizer-cmp")
+
+		require("luasnip").filetype_extend("htmldjango", { "html" }) -- snippets for "htmldjango" from "html"
 		require("luasnip.loaders.from_vscode").lazy_load()
 
 		local source_mapping = {
@@ -70,12 +72,13 @@ return {
 			},
 		})
 
+		local blend = 15
 		local _highlights = {
-			{ 0, "CmpPMenu", { bg = "#19212f", blend = 15 } },
-			{ 0, "CmpPMenuSel", { bg = "#2f3a4a", blend = 15 } }, -- #3c4759
-			{ 0, "CmpPMenuBorder", { fg = "#ffffff", blend = 100 } },
-			{ 0, "CmpPDoc", { link = "CmpPMenu" } },
-			{ 0, "CmpPDocBorder", { link = "CmpPDocBorder" } },
+			{ 0, "CmpPMenu", { default = true, blend = blend } }, -- #19212f
+			{ 0, "CmpPMenuSel", { link = "PMenuSel" } }, -- #2f3a4a #3c4759
+			{ 0, "CmpPMenuBorder", { default = true, blend = blend } }, -- #8296b5
+			{ 0, "CmpPDoc", { default = true, blend = blend } },
+			{ 0, "CmpPDocBorder", { default = true, blend = blend } },
 		}
 
 		for _, h in ipairs(_highlights) do
@@ -97,7 +100,7 @@ return {
 
 		local opts = {
 			completion = {
-				completeopt = "menu,menuone,noselect",
+				completeopt = "menu,menuone,noinsert",
 			},
 			window = {
 				-- completion = cmp.config.window.bordered(),

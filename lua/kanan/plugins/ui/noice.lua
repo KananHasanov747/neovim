@@ -6,8 +6,8 @@ return {
 		"rcarriga/nvim-notify",
 	},
 	keys = {
-		{ "<ESC>", "<cmd>noh<cr>", { desc = "Dismiss Search Highlighting" } },
-		{ "<leader>nd", "<cmd>NoiceDismiss<cr>", { desc = "Dismiss Noice Message" } },
+		{ "<ESC>", "<cmd>noh<cr>", desc = "Dismiss Search Highlighting" },
+		{ "<leader>nd", "<cmd>NoiceDismiss<cr>", desc = "Dismiss Noice Message" },
 	},
 	opts = {
 		lsp = {

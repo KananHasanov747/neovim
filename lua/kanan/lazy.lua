@@ -25,7 +25,7 @@ require("lazy").setup({
 		version = false, -- if use stable (that is, "*"), it'll break the neovim config
 	},
 	install = {
-		colorscheme = { "onedark" }, -- TODO: use vim.g.colors_name
+		colorscheme = { "solarized-osaka", "onedark" }, -- TODO: use vim.g.colors_name
 	},
 	checker = {
 		enabled = true,
@@ -34,4 +34,22 @@ require("lazy").setup({
 		enabled = true,
 		notify = false,
 	},
+	performance = {
+		cache = {
+			enabled = true,
+		},
+		rtp = {
+			disabled_plugins = {
+				"gzip",
+				"matchit",
+				"matchparen",
+				"netrwPlugin",
+				"tarPlugin",
+				"tohtml",
+				"tutor",
+				"zipPlugin",
+			},
+		},
+	},
+	debug = false,
 })

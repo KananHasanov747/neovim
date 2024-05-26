@@ -3,7 +3,7 @@ return {
 	-- Package Manager for LSP, Formatters, DAP servers, and linters
 	{
 		"williamboman/mason.nvim",
-		event = "VeryLazy",
+		-- event = "VeryLazy",
 		cmd = "Mason",
 		build = ":MasonUpdate",
 		config = function()
@@ -20,7 +20,7 @@ return {
 			local mr = require("mason-registry")
 			for _, tbl in ipairs(ensure_installed) do
 				for _, package in ipairs(tbl) do
-					-- use "-" before the package name "-stylua" to uninstall it
+					-- use "-" before the package name (like, "-stylua") to uninstall it
 					if package:find("%-") ~= nil then
 						local ok, pkg = pcall(mr.get_package, package:sub(2))
 						if ok and pkg:is_installed() then
@@ -39,7 +39,7 @@ return {
 	-- Package Manager for LSP installation
 	{
 		"williamboman/mason-lspconfig.nvim",
-		event = "VeryLazy",
+		-- event = "VeryLazy",
 		config = function()
 			require("mason-lspconfig").setup({
 				ensure_installed = {

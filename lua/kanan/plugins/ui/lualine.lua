@@ -2,9 +2,10 @@ return {
 	"nvim-lualine/lualine.nvim",
 	event = "VeryLazy",
 	config = function()
+		local colorscheme = vim.g.colors_name
 		require("lualine").setup({
 			options = {
-				theme = "auto",
+				theme = colorscheme,
 				globalstatus = true,
 				disabled_filetypes = { statusline = { "dashboard" } },
 			},
