@@ -1,8 +1,7 @@
 return {
 	"neovim/nvim-lspconfig",
 	-- enabled = false,
-	-- event = { "BufReadPost", "BufNewFile", "BufWritePre" },
-	event = "VeryLazy",
+	event = { "BufReadPre", "BufNewFile" },
 	cmd = { "LspInfo", "LspInstall", "LspUninstall" },
 	dependencies = {
 		"hrsh7th/nvim-cmp",
@@ -29,8 +28,7 @@ return {
 		})
 
 		local lspconfig = require("lspconfig")
-		local capabilities = vim.lsp.protocol.make_client_capabilities()
-		capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+		local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 		local function on_attach(client, bufnr)
 			local function buf_set_keymap(mode, key, func)
@@ -56,15 +54,16 @@ return {
 			}
 		end
 
-		local handlers = {
-			["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border("FloatBorder") }),
-			["textDocument/signatureHelp"] = vim.lsp.with(
-				vim.lsp.handlers.signature_help,
-				{ border = border("FloatBorder") }
-			),
-		}
+		-- local handlers = {
+		-- 	["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border("FloatBorder") }),
+		-- 	["textDocument/signatureHelp"] = vim.lsp.with(
+		-- 		vim.lsp.handlers.signature_help,
+		-- 		{ border = border("FloatBorder") }
+		-- 	),
+		-- }
 
 		local servers = {
+			-- BUG: lua_ls is not working (though other servers are)
 			lua_ls = {
 				single_file_support = true,
 				settings = {
@@ -96,9 +95,7 @@ return {
 				root_dir = lspconfig.util.root_pattern(".git", "package.json"),
 			},
 			ruff_lsp = {},
-			cssls = {
-				capabilities = capabilities,
-			},
+			cssls = {},
 			tsserver = {
 				enabled = true,
 				single_file_support = true,
@@ -132,7 +129,7 @@ return {
 							includeInlayParameterNameHints = "literals", -- 'none' | 'literals' | 'all';
 							includeInlayParameterNameHintsWhenArgumentMatchesName = true,
 							includeInlayPropertyDeclarationTypeHints = true,
-							includeInlayVariableTypeHints = false,
+							includeInlayVariableTypeHints = true,
 						},
 					},
 				},
@@ -149,20 +146,22 @@ return {
 			},
 		}
 
-		-- TODO: use handlers inside setup_handlers
+		-- disabling lsp formatters
+		-- vim.lsp.buf.format({
+		-- 	filter = function(client)
+		-- 		return client.name ~= "html"
+		-- 	end,
+		-- })
+
 		-- provides "capabalities" and "on_attach" to all servers
 		require("mason-lspconfig").setup_handlers({
 			function(server_name)
-				lspconfig[server_name].setup({
-					on_attach = on_attach,
-					capabilities = capabilities,
-				})
+				local server_opts = servers[server_name] or {}
+				-- server_opts["handlers"] = handlers
+				server_opts["on_attach"] = on_attach
+				server_opts["capabilities"] = capabilities
+				lspconfig[server_name].setup(server_opts)
 			end,
 		})
-
-		-- provides a dedicated handler to each server using the table above
-		for lsp, values in pairs(servers) do
-			lspconfig[lsp].setup(values)
-		end
 	end,
 }

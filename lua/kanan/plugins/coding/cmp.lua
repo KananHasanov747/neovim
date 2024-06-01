@@ -30,7 +30,10 @@ return {
 		local lspkind = require("lspkind")
 		local cmp_tailwind = require("tailwindcss-colorizer-cmp")
 
-		require("luasnip").filetype_extend("htmldjango", { "html" }) -- snippets for "htmldjango" from "html"
+		local luasnip = require("luasnip")
+		luasnip.filetype_extend("javascriptreact", { "html" }) -- snippets for "jsx" from "html"
+		luasnip.filetype_extend("typescriptreact", { "html" }) -- snippets for "tsx" from "html"
+		luasnip.filetype_extend("htmldjango", { "html" }) -- snippets for "htmldjango" from "html"
 		require("luasnip.loaders.from_vscode").lazy_load()
 
 		local source_mapping = {
@@ -39,6 +42,7 @@ return {
 			luasnip = "[SNIP]",
 			buffer = "[BUF]",
 			path = "[PATH]",
+			copilot = "[COP]",
 			-- treesitter = "[TREE]",
 		}
 
@@ -51,6 +55,7 @@ return {
 				Field = "",
 				Variable = "",
 				Class = "",
+				Copilot = "",
 				Interface = "",
 				Module = "",
 				Property = "",
@@ -152,9 +157,28 @@ return {
 				{ name = "path" },
 				{ name = "luasnip" },
 				{ name = "emoji" },
+				{ name = "copilot" },
 			}, {
 				{ name = "buffer" },
 			}),
+			sorting = {
+				priority_weight = 2,
+				comparators = {
+					require("copilot_cmp.comparators").prioritize,
+
+					-- Below is the default comparitor list and order for nvim-cmp
+					cmp.config.compare.offset,
+					-- cmp.config.compare.scopes, --this is commented in nvim-cmp too
+					cmp.config.compare.exact,
+					cmp.config.compare.score,
+					cmp.config.compare.recently_used,
+					cmp.config.compare.locality,
+					cmp.config.compare.kind,
+					cmp.config.compare.sort_text,
+					cmp.config.compare.length,
+					cmp.config.compare.order,
+				},
+			},
 		}
 
 		local completion = {

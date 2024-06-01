@@ -3,18 +3,27 @@ return {
 	-- Package Manager for LSP, Formatters, DAP servers, and linters
 	{
 		"williamboman/mason.nvim",
-		-- event = "VeryLazy",
 		cmd = "Mason",
 		build = ":MasonUpdate",
 		config = function()
 			require("mason").setup({})
 
 			local formatters = {
-				"stylua",
 				"prettier",
+				--htmldjango
+				"-djlint",
+				-- python
+				"-autopep8",
+				"-black",
+				"-isort",
+				-- lua
+				"stylua",
 			}
 			local dap = {}
-			local linters = {}
+			local linters = {
+				-- python
+				"flake8",
+			}
 			local ensure_installed = { dap, linters, formatters }
 
 			local mr = require("mason-registry")
@@ -39,12 +48,11 @@ return {
 	-- Package Manager for LSP installation
 	{
 		"williamboman/mason-lspconfig.nvim",
-		-- event = "VeryLazy",
 		config = function()
 			require("mason-lspconfig").setup({
 				ensure_installed = {
 					"lua_ls",
-					"ruff_lsp",
+					"ruff_lsp", -- python lsp, formatter and linter
 					"html",
 					"cssls",
 					"tsserver",

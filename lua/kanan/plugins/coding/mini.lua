@@ -8,7 +8,6 @@ return {
 	-- convenient commenting
 	{
 		"echasnovski/mini.comment",
-		event = "VeryLazy",
 		opts = {},
 	},
 }

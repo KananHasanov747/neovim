@@ -31,6 +31,8 @@ local options = {
 	termguicolors = true,
 	virtualedit = "block",
 	-- winminwidth = 5,
+	winfixwidth = true,
+	winfixheight = true,
 	-- wrap = false,
 }
 

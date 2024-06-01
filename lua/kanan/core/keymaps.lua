@@ -18,6 +18,14 @@ map("n", "<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 map({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and Clear hlsearch" })
 
 -- Terminal Mappings
+local term_clear = function()
+	local sb = vim.opt_local.scrollback._value
+	vim.opt_local.scrollback._value = 1
+	vim.fn.feedkeys("reset", "t")
+	vim.opt_local.scrollback._value = sb
+end
+
+-- map("t", "<C-C>", term_clear, { desc = "Clear terminal scrollback" })
 map("t", "<esc><esc>", "<c-\\><c-n>", { desc = "Enter Normal Mode" })
 map("t", "<C-h>", "<cmd>wincmd h<cr>", { desc = "Go to Left Window" })
 map("t", "<C-j>", "<cmd>wincmd j<cr>", { desc = "Go to Lower Window" })

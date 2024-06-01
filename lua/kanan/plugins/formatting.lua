@@ -3,12 +3,15 @@ return {
 	enabled = true, -- false if "none-ls.nvim" is activated
 	event = "VeryLazy",
 	dependencies = { "mason.nvim" },
-	cmd = "ConformInfo",
+	cmd = { "ConformInfo" },
 	config = function()
 		local conform = require("conform")
 
 		conform.setup({
 			formatters = {
+				-- djlint = {
+				-- 	args = { "$FILENAME", "--profile=django", "--indent=2", '--ignore="H016,H030,H031,T003"' },
+				-- },
 				prettier = {
 					options = {
 						ft_parsers = {
@@ -35,6 +38,7 @@ return {
 			},
 			formatters_by_ft = {
 				lua = { "stylua" },
+				python = { "ruff" }, -- ruff_lsp
 				html = { "prettier" },
 				htmldjango = { "prettier" },
 				css = { "prettier" },
