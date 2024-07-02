@@ -9,38 +9,6 @@ return {
 		"williamboman/mason-lspconfig.nvim",
 	},
 	config = function()
-		vim.diagnostic.config({
-			virtual_text = {
-				prefix = "●",
-				source = "if_many",
-			},
-			signs = {
-				text = {
-					[vim.diagnostic.severity.ERROR] = " ",
-					[vim.diagnostic.severity.WARN] = " ",
-					[vim.diagnostic.severity.HINT] = " ",
-					[vim.diagnostic.severity.INFO] = " ",
-				},
-			},
-			underline = true,
-			update_in_insert = false,
-			severity_sort = false,
-		})
-
-		local lspconfig = require("lspconfig")
-		local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
-
-		local function on_attach(client, bufnr)
-			local function buf_set_keymap(mode, key, func)
-				vim.keymap.set(mode, key, func, { buffer = bufnr, silent = true })
-			end
-
-			-- require("lsp_signature").on_attach()
-
-			-- Mapping
-			buf_set_keymap("n", "K", vim.lsp.buf.hover)
-		end
-
 		local function border(hl_name)
 			return {
 				{ "╭", hl_name },
@@ -54,16 +22,36 @@ return {
 			}
 		end
 
-		-- local handlers = {
-		-- 	["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border("FloatBorder") }),
-		-- 	["textDocument/signatureHelp"] = vim.lsp.with(
-		-- 		vim.lsp.handlers.signature_help,
-		-- 		{ border = border("FloatBorder") }
-		-- 	),
-		-- }
+		local lspconfig = require("lspconfig")
+		local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
+
+		local function on_attach(client, bufnr)
+			if client.server_capabilities.documentSymbolProvider then
+				require("nvim-navic").attach(client, bufnr)
+			end
+
+			local function buf_set_keymap(mode, key, func)
+				vim.keymap.set(mode, key, func, { buffer = bufnr, silent = true })
+			end
+
+			-- require("lsp_signature").on_attach()
+			-- Mapping
+			buf_set_keymap("n", "K", vim.lsp.buf.hover)
+		end
+
+		-- TODO: the background doesn't become transparent
+		local handlers = {
+			["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+				border = border("CmpPMenu"),
+				winhighlight = "Normal:CmpPMenu,FloatBorder:CmpPMenuBorder",
+			}),
+			["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+				border = border("CmpPMenu"),
+				winhighlight = "Normal:CmpPMenu,FloatBorder:CmpPMenuBorder",
+			}),
+		}
 
 		local servers = {
-			-- BUG: lua_ls is not working (though other servers are)
 			lua_ls = {
 				single_file_support = true,
 				settings = {
@@ -144,14 +132,8 @@ return {
 					"tailwind.config.ts"
 				),
 			},
+			marksman = {},
 		}
-
-		-- disabling lsp formatters
-		-- vim.lsp.buf.format({
-		-- 	filter = function(client)
-		-- 		return client.name ~= "html"
-		-- 	end,
-		-- })
 
 		-- provides "capabalities" and "on_attach" to all servers
 		require("mason-lspconfig").setup_handlers({

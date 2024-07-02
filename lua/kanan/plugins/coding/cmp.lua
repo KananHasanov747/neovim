@@ -79,11 +79,11 @@ return {
 
 		local blend = 15
 		local _highlights = {
-			{ 0, "CmpPMenu", { default = true, blend = blend } }, -- #19212f
+			{ 0, "CmpPMenu", { default = true, blend = blend, bg = "NONE" } }, -- #19212f
 			{ 0, "CmpPMenuSel", { link = "PMenuSel" } }, -- #2f3a4a #3c4759
-			{ 0, "CmpPMenuBorder", { default = true, blend = blend } }, -- #8296b5
-			{ 0, "CmpPDoc", { default = true, blend = blend } },
-			{ 0, "CmpPDocBorder", { default = true, blend = blend } },
+			{ 0, "CmpPMenuBorder", { default = true, blend = blend, bg = "NONE" } }, -- #8296b5
+			{ 0, "CmpPDoc", { default = true, blend = blend, bg = "NONE" } },
+			{ 0, "CmpPDocBorder", { default = true, blend = blend, bg = "NONE" } },
 		}
 
 		for _, h in ipairs(_highlights) do
@@ -108,9 +108,6 @@ return {
 				completeopt = "menu,menuone,noinsert",
 			},
 			window = {
-				-- completion = cmp.config.window.bordered(),
-				-- documentation = cmp.config.window.bordered(),
-
 				completion = {
 					border = border("CmpPMenuBorder"),
 					winhighlight = "Normal:CmpPMenu,CursorLine:CmpPMenuSel,Search:None",
@@ -181,11 +178,24 @@ return {
 			},
 		}
 
+		cmp.setup(opts)
+
+		-- ======================================= cmp-cmdline =======================================
+
 		local completion = {
 			completeopt = "menu,menuone,noselect",
 			-- autocomplete = false,
 		}
 		local cmdline_mapping = cmp.mapping.preset.cmdline({
+			["<Tab>"] = {
+				c = function()
+					if cmp.visible() then
+						cmp.confirm({ select = true })
+					else
+						cmp.complete()
+					end
+				end,
+			},
 			["<Up>"] = {
 				c = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
 			},
@@ -196,10 +206,9 @@ return {
 			["<C-e>"] = { c = cmp.mapping.abort() },
 		})
 
-		cmp.setup(opts)
 		cmp.setup.cmdline(":", {
 			completion = completion,
-		    -- stylua: ignore
+		  -- stylua: ignore
 			view = { entries = "custom" },
 			mapping = cmdline_mapping,
 			sources = cmp.config.sources({
@@ -215,18 +224,20 @@ return {
 			}),
 			matching = { disallow_symbol_nonprefix_matching = false },
 		})
+
 		cmp.setup.cmdline("/", {
 			completion = completion,
-		    -- stylua: ignore
+		  -- stylua: ignore
 			view = { entries = "custom" },
 			mapping = cmdline_mapping,
 			sources = {
 				{ name = "buffer" },
 			},
 		})
+
 		cmp.setup.cmdline("?", {
 			completion = completion,
-		    -- stylua: ignore
+		  -- stylua: ignore
 			view = { entries = "custom" },
 			mapping = cmdline_mapping,
 			sources = {

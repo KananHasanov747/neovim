@@ -39,6 +39,7 @@ return {
 		},
 		{ "<leader>fg", "<cmd>Telescope git_files<cr>", desc = "Find Files (git-files)" },
 		{ "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent" },
+		{ "<leader>fc", "<cmd>Telescope colorscheme<cr>", desc = "Colorscheme" },
 	},
 	opts = function()
 		local actions = require("telescope.actions")

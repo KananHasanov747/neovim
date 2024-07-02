@@ -11,12 +11,30 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+vim.diagnostic.config({
+	virtual_text = {
+		prefix = "●",
+		source = "if_many",
+	},
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = " ",
+			[vim.diagnostic.severity.WARN] = " ",
+			[vim.diagnostic.severity.HINT] = " ",
+			[vim.diagnostic.severity.INFO] = " ",
+		},
+	},
+	underline = true,
+	update_in_insert = false,
+	severity_sort = false,
+})
+
 require("lazy").setup({
 	{ import = "kanan.plugins" },
 	{ import = "kanan.plugins.ui" },
 	{ import = "kanan.plugins.editor" },
-	{ import = "kanan.plugins.util" },
 	{ import = "kanan.plugins.lsp" },
+	{ import = "kanan.plugins.dap" },
 	{ import = "kanan.plugins.coding" },
 }, {
 	enabled = false,

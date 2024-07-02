@@ -40,7 +40,7 @@ return {
 				lua = { "stylua" },
 				python = { "ruff" }, -- ruff_lsp
 				html = { "prettier" },
-				htmldjango = { "prettier" },
+				htmldjango = { "djlint" },
 				css = { "prettier" },
 				scss = { "prettier" },
 				javascript = { "prettier" },

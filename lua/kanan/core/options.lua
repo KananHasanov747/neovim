@@ -16,7 +16,7 @@ local options = {
 	number = true,
 	numberwidth = 4,
 	relativenumber = true,
-	-- scrolloff = 4,
+	scrolloff = 4,
 	-- sidescrolloff = 8,
 	shiftwidth = 2,
 	showmode = false,
@@ -26,7 +26,7 @@ local options = {
 	splitbelow = true,
 	splitkeep = "screen",
 	splitright = true,
-	-- statuscolumn = "",
+	-- statuscolumn = "%=%{v:relnum?v:relnum:v:lnum} ",
 	tabstop = 2,
 	termguicolors = true,
 	virtualedit = "block",
@@ -34,6 +34,13 @@ local options = {
 	winfixwidth = true,
 	winfixheight = true,
 	-- wrap = false,
+
+	-- nvim-ufo
+	-- foldcolumn = "1",
+	-- foldlevel = 99,
+	-- foldlevelstart = 99,
+	-- foldenable = true,
+	-- fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]],
 }
 
 for k, v in pairs(options) do

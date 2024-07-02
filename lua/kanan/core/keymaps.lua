@@ -19,11 +19,13 @@ map({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and Clear hlsea
 
 -- Terminal Mappings
 local term_clear = function()
-	local sb = vim.opt_local.scrollback._value
-	vim.opt_local.scrollback._value = 1
-	vim.fn.feedkeys("reset", "t")
-	vim.opt_local.scrollback._value = sb
+	vim.fn.feedkeys("", "n")
+	local sb = vim.bo.scrollback
+	vim.bo.scrollback = 1
+	vim.bo.scrollback = sb
 end
+
+map("t", "<C-l>", term_clear)
 
 -- map("t", "<C-C>", term_clear, { desc = "Clear terminal scrollback" })
 map("t", "<esc><esc>", "<c-\\><c-n>", { desc = "Enter Normal Mode" })
@@ -55,3 +57,16 @@ map("n", "<leader><tab><tab>", "<cmd>tabnew<cr>", { desc = "New Tab" })
 map("n", "<leader><tab>]", "<cmd>tabnext<cr>", { desc = "Next Tab" })
 map("n", "<leader><tab>d", "<cmd>tabclose<cr>", { desc = "Close Tab" })
 map("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
+
+-- markdown_preview.nvim
+-- map("n", "<leader>mt", "<cmd>MarkdownPreviewToggle<cr>", { desc = "Markdown Preview Toggle" })
+-- map("n", "<leader>md", "<cmd>MarkdownPreviewStop<cr>", { desc = "Markdown Preview Stop" })
+
+-- code_runner
+map("n", "<leader>r", ":RunCode<CR>", { desc = "CodeRunner Run Code", noremap = true, silent = false })
+map("n", "<leader>rf", ":RunFile<CR>", { desc = "CodeRunner Run File", noremap = true, silent = false })
+-- map("n", "<leader>rft", ":RunFile tab<CR>", { noremap = true, silent = false })
+-- map("n", "<leader>rp", ":RunProject<CR>", { noremap = true, silent = false })
+-- map("n", "<leader>rc", ":RunClose<CR>", { noremap = true, silent = false })
+-- map("n", "<leader>crf", ":CRFiletype<CR>", { noremap = true, silent = false })
+-- map("n", "<leader>crp", ":CRProjects<CR>", { noremap = true, silent = false })

@@ -11,7 +11,7 @@ return {
 			local formatters = {
 				"prettier",
 				--htmldjango
-				"-djlint",
+				"djlint", -- formatter, linter
 				-- python
 				"-autopep8",
 				"-black",
@@ -22,7 +22,8 @@ return {
 			local dap = {}
 			local linters = {
 				-- python
-				"flake8",
+				"-flake8",
+				"mypy",
 			}
 			local ensure_installed = { dap, linters, formatters }
 
@@ -57,6 +58,7 @@ return {
 					"cssls",
 					"tsserver",
 					"tailwindcss",
+					"marksman", -- markdown
 				},
 				auto_install = true,
 			})
