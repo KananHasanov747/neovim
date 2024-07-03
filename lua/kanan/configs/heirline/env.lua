@@ -6,6 +6,26 @@ M.Space = function(space)
 	return { provider = string.rep(" ", space), hl = { bg = "None" } }
 end
 
+M.FileIcon = {
+	init = function(self)
+		self.type = vim.bo[self.bufnr and self.bufnr or 0].filetype ~= ""
+				and vim.bo[self.bufnr and self.bufnr or 0].filetype
+			or vim.bo[self.bufnr and self.bufnr or 0].buftype
+		self.icon, self.icon_color =
+			require("nvim-web-devicons").get_icon_color(self.filename, self.type, { default = true })
+	end,
+	provider = function(self)
+		return (self.type == "terminal" and "" or self.icon) .. " "
+	end,
+	hl = function(self)
+		if self.bufnr and not (self.is_active or self.is_visible) then
+			return { bg = "None" }
+		else
+			return { fg = self.icon_color }
+		end
+	end,
+}
+
 function M.setup_colors()
 	return {
 		bright_bg = utils.get_highlight("Folded").bg,

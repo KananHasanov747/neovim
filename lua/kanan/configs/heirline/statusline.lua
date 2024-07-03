@@ -47,7 +47,9 @@ M.Git = {
 		self.status_dict = vim.b.gitsigns_status_dict
 		self.has_changes = self.status_dict.added ~= 0 or self.status_dict.removed ~= 0 or self.status_dict.changed ~= 0
 	end,
+}
 
+M.GitBranch = utils.insert(M.Git, {
 	env.Space(2),
 	{ -- git branch name
 		provider = function(self)
@@ -62,31 +64,48 @@ M.Git = {
 			name = "heirline_git_branches",
 		},
 	},
-}
+})
+
+M.GitStatus = utils.insert(M.Git, {
+	on_click = {
+		callback = function()
+			require("telescope.builtin").git_status()
+		end,
+		name = "heirline_git_status",
+	},
+	env.Space(2),
+	{
+		provider = function(self)
+			local count = self.status_dict.added or 0
+			return count > 0 and (" " .. count .. " ")
+		end,
+		hl = { fg = "git_add" },
+	},
+	{
+		provider = function(self)
+			local count = self.status_dict.removed or 0
+			return count > 0 and (" " .. count .. " ")
+		end,
+		hl = { fg = "git_del" },
+	},
+	{
+		provider = function(self)
+			local count = self.status_dict.changed or 0
+			return count > 0 and (" " .. count .. " ")
+		end,
+		hl = { fg = "git_change" },
+	},
+})
 
 M.FileType = {
 	init = function(self)
 		self.filename = vim.api.nvim_buf_get_name(0)
-		self.type = vim.bo.filetype ~= "" and vim.bo.filetype or vim.bo.buftype
-	end,
-}
-
-M.FileIcon = {
-	init = function(self)
-		self.icon, self.icon_color =
-			require("nvim-web-devicons").get_icon_color(self.filename, self.type, { default = true })
-	end,
-	provider = function(self)
-		return self.icon and (self.icon .. " ")
-	end,
-	hl = function(self)
-		return { fg = self.icon_color }
 	end,
 }
 
 M.FileTypeName = {
 	provider = function(self)
-		return self.type
+		return vim.bo.filetype ~= "" and vim.bo.filetype or vim.bo.buftype
 	end,
 	hl = { bg = "None" },
 }
@@ -109,7 +128,7 @@ M.FileFlags = {
 	},
 }
 
-M.FileType = utils.insert(M.FileType, env.Space(2), M.FileIcon, M.FileTypeName, M.FileFlags)
+M.FileType = utils.insert(M.FileType, env.Space(2), env.FileIcon, M.FileTypeName, M.FileFlags)
 
 M.Ruler = {
 	-- %l = current line number
@@ -119,6 +138,92 @@ M.Ruler = {
 	provider = "%l:%L %P",
 	hl = { bg = "None" },
 	env.Space(2),
+}
+
+M.Time = {
+	provider = os.date("%H:%M:%S"),
+	hl = { bg = "None" },
+	env.Space(2),
+}
+
+M.LSPActive = {
+	condition = conditions.lsp_attached,
+	update = { "LspAttach", "LspDetach" },
+
+	-- You can keep it simple,
+	-- provider = " [LSP]",
+
+	-- Or complicate things a bit and get the servers names
+	provider = function()
+		local names = {}
+		for _, server in pairs(vim.lsp.get_clients({ bufnr = 0 })) do
+			table.insert(names, server.name)
+		end
+		return "  " .. table.concat(names, ", ")
+	end,
+	hl = { fg = "bright_fg" },
+	on_click = {
+		callback = function()
+			vim.cmd("LspInfo")
+		end,
+		name = "heirline_lsp_info",
+	},
+	env.Space(2),
+}
+
+M.Diagnostics = {
+	env.Space(2),
+
+	condition = conditions.has_diagnostics,
+
+	static = {
+		error_icon = vim.fn.sign_getdefined("DiagnosticSignError")[1].text,
+		warn_icon = vim.fn.sign_getdefined("DiagnosticSignWarn")[1].text,
+		info_icon = vim.fn.sign_getdefined("DiagnosticSignInfo")[1].text,
+		hint_icon = vim.fn.sign_getdefined("DiagnosticSignHint")[1].text,
+	},
+
+	init = function(self)
+		self.errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
+		self.warnings = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
+		self.hints = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
+		self.info = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
+	end,
+
+	on_click = {
+		callback = function()
+			require("telescope.builtin").diagnostics()
+		end,
+		name = "heirline_diagnostics",
+	},
+
+	update = { "DiagnosticChanged", "BufEnter" },
+
+	{
+		provider = function(self)
+			-- 0 is just another output, we can decide to print it or not!
+			return self.errors > 0 and (self.error_icon .. self.errors .. " ")
+		end,
+		hl = { fg = "diag_error" },
+	},
+	{
+		provider = function(self)
+			return self.warnings > 0 and (self.warn_icon .. self.warnings .. " ")
+		end,
+		hl = { fg = "diag_warn" },
+	},
+	{
+		provider = function(self)
+			return self.info > 0 and (self.info_icon .. self.info .. " ")
+		end,
+		hl = { fg = "diag_info" },
+	},
+	{
+		provider = function(self)
+			return self.hints > 0 and (self.hint_icon .. self.hints)
+		end,
+		hl = { fg = "diag_hint" },
+	},
 }
 
 return M

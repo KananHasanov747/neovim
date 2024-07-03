@@ -20,6 +20,7 @@ M.TablineFileFlags = {
 		end,
 		provider = "",
 		hl = { fg = "white" },
+		env.Space(1),
 	},
 	{
 		condition = function(self)
@@ -33,20 +34,6 @@ M.TablineFileFlags = {
 		end,
 		hl = { fg = "orange" },
 	},
-}
-
-M.TablineFileIcon = {
-	init = function(self)
-		self.type = vim.bo[self.bufnr].filetype ~= "" and vim.bo[self.bufnr].filetype or vim.bo[self.bufnr].buftype
-		self.icon, self.icon_color =
-			require("nvim-web-devicons").get_icon_color(self.filename, self.type, { default = true })
-	end,
-	provider = function(self)
-		return self.icon and (self.icon .. "  ")
-	end,
-	hl = function(self)
-		return { fg = (self.is_active or self.is_visible) and self.icon_color }
-	end,
 }
 
 M.TablineFileBlock = utils.insert({
@@ -68,41 +55,46 @@ M.TablineFileBlock = utils.insert({
 		end,
 		name = "heirline_tabline_buffer_callback",
 	},
+	{
+		provider = function(self)
+			return (self.is_active or self.is_visible) and "┃" or "│"
+		end,
+		hl = function(self)
+			return { fg = (self.is_active or self.is_visible) and "blue" or "gray" }
+		end,
+	},
 	-- hl = function(self)
 	-- 	return { bg = (self.is_active or self.is_visible) and "red" }
 	-- end,
-}, env.Space(1), M.TablineFileIcon, M.TablineFileName, env.Space(1), M.TablineFileFlags)
+}, env.Space(1), env.FileIcon, M.TablineFileName, env.Space(1), M.TablineFileFlags)
 
 M.TablineCloseButton = {
 	condition = function(self)
-		return not vim.api.nvim_get_option_value("modified", { buf = self.bufnr })
+		return self.filename ~= ""
 	end,
 	env.Space(1),
-	{
-		provider = "󰅖",
-		hl = function(self)
-			return { fg = (self.is_active or self.is_visible) and "red" }
+	provider = "󰅖",
+	hl = function(self)
+		return { fg = (self.is_active or self.is_visible) and "red" }
+	end,
+	on_click = {
+		callback = function(_, minwid)
+			vim.schedule(function()
+				vim.api.nvim_buf_delete(minwid, { force = false })
+				vim.cmd.redrawtabline()
+			end)
 		end,
-		on_click = {
-			callback = function(_, minwid)
-				vim.schedule(function()
-					vim.api.nvim_buf_delete(minwid, { force = false })
-					vim.cmd.redrawtabline()
-				end)
-			end,
-			minwid = function(self)
-				return self.bufnr
-			end,
-			name = "heirline_tabline_close_buffer_callback",
-		},
+		minwid = function(self)
+			return self.bufnr
+		end,
+		name = "heirline_tabline_close_buffer_callback",
 	},
 }
 
 M.TablineBufferBlock = {
-	env.Space(1),
 	M.TablineFileBlock,
 	M.TablineCloseButton,
-	env.Space(2),
+	env.Space(1),
 }
 
 local get_bufs = function()
@@ -132,7 +124,9 @@ vim.api.nvim_create_autocmd({ "VimEnter", "UIEnter", "BufAdd", "BufDelete" }, {
 			-- elseif vim.o.showtabline ~= 1 then -- don't reset the option if it's already at default value
 			-- 	vim.o.showtabline = 1 -- only when #tabpages > 1
 			-- end
-			vim.o.showtabline = 2
+			if vim.bo.filetype ~= "dashboard" then
+				vim.o.showtabline = 2
+			end
 		end)
 	end,
 })
